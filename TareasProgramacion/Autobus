@@ -1,0 +1,92 @@
+#include <iostream>
+using namespace std;
+
+class AutoBus{
+private:
+	const double MAX_COMBUSTIBLE = 100.0;
+	
+	double combustible;
+	int asientos;
+	double tarifa;
+	int pasajeros;
+public:
+	AutoBus(double comb, int asient, double tar){
+		combustible=comb;
+		asientos=asient;
+		tarifa=tar;
+		pasajeros=0;
+	}
+	void recogerPasajeros(int nroPasajeros){
+		if(nroPasajeros < 0) {
+			cout<<"Error: no se permiten valores negativos.\n";
+			return;
+		}
+		if(pasajeros + nroPasajeros > asientos){
+			cout<<"Error: no hay suficientes asientos disponibles.\n";
+			return;
+		}
+		pasajeros += nroPasajeros;
+	}
+	void recargarGasolina(double cantidad){
+		if(cantidad < 0){
+			cout<<"Error: no se permiten valores negativos.\n";
+			return;
+		}
+		if(combustible + cantidad > MAX_COMBUSTIBLE){
+			cout<<"Error: el combustible no puede superar 100.\n";
+			return;
+		}
+		combustible += cantidad;
+	}
+	int calcularCantidadAsientosDisponibles() const {
+		return asientos - pasajeros;
+	}
+	bool hayEspacio() const {
+		return pasajeros < asientos;
+	}
+	bool estaVacio() const {
+		return pasajeros == 0;
+	}
+	double calcularMontoRecaudado() const {
+		return pasajeros * tarifa;
+	}
+	double getCombustible() const {
+		return combustible;
+	}
+};
+int main(){
+	double combustibleInicial;
+	int asientos;
+	double tarifa;
+	do{
+		cout<<"Ingrese cantidad de asientos (mayor a 0): ";
+		cin>>asientos;
+	}while (asientos <= 0);
+	do{
+		cout<<"Ingrese tarifa por pasajero (>=0): ";
+		cin>>tarifa;
+	}while (tarifa < 0);
+	do{
+		cout<<"Ingrese combustible inicial (0 - 100): ";
+		cin>>combustibleInicial;
+	}while (combustibleInicial < 0 || combustibleInicial > 100);
+	AutoBus bus(combustibleInicial, asientos, tarifa);
+	int pasajerosSuben;
+	do{
+		cout<<"\nCuantos pasajeros desea recoger?: ";
+		cin>>pasajerosSuben;
+	}while (pasajerosSuben < 0 || pasajerosSuben > asientos);
+	bus.recogerPasajeros(pasajerosSuben);
+	cout<<"\nAsientos disponibles: "<<bus.calcularCantidadAsientosDisponibles()<<endl;
+	cout<<"¿Hay espacio?: "<< (bus.hayEspacio() ? "Si" : "No")<<endl;
+	double gasolinaExtra;
+	do{
+		cout<<"\nCuanta gasolina desea recargar?: ";
+		cin>>gasolinaExtra;
+	} while (gasolinaExtra < 0 || 
+			 gasolinaExtra + bus.getCombustible() > 100);
+	bus.recargarGasolina(gasolinaExtra);
+	cout<<"Combustible actual: "<< bus.getCombustible()<<endl;
+	cout<<"Monto recaudado: "<<bus.calcularMontoRecaudado()<<endl;
+	return 0;
+}
